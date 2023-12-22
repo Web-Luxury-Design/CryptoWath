@@ -1,10 +1,14 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import TableLine from "./TableLine";
 import ToTop from "./ToTop";
+import { isStableCoin } from "./Utils";
 
 const Table = ({ coinsData }) => {
   const [orderBy, setOrderBy] = useState("");
   const [rangeNumber, setRangeNumber] = useState(100);
+  const showStable = useSelector((state) => state.stableReducer.showStable);
+  const showFavList = useSelector((state) => state.listReducer.showList);
 
   const tableHeader = [
     "Prix",
@@ -64,6 +68,25 @@ const Table = ({ coinsData }) => {
       {coinsData &&
         coinsData
           .slice(0, rangeNumber)
+          .filter((coin) => {
+            if (showStable) {
+              return coin;
+            } else {
+              if (isStableCoin(coin.symbol)) {
+                return coin;
+              }
+            }
+          })
+          .filter((coin) => {
+            if (showFavList) {
+              let list = window.localStorage.coinList.split(",");
+              if (list.includes(coin.id)) {
+                return coin;
+              }
+            } else {
+              return coin;
+            }
+          })
           .sort((a, b) => {
             switch (orderBy) {
               case "Prix":
@@ -144,10 +167,12 @@ const Table = ({ coinsData }) => {
                 );
               case "ATHreverse":
                 return a.ath_change_percentage - b.ath_change_percentage;
+              default:
+                break;
             }
           })
           .map((coin, index) => (
-            <TableLine coin={coin} index={index} key={index} />
+            <TableLine coin={coin} key={coin.id} index={index} />
           ))}
     </div>
   );
