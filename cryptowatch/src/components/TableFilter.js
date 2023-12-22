@@ -9,7 +9,7 @@ const TableFilter = () => {
           <label htmlFor="stableCoin">Avec stable coin</label>
         </div>
         <div className="no-list-btn">
-          <p>aucun liste</p>
+          <p>aucune liste</p>
         </div>
         <div className="fav-list">
           <p>Liste des favoris</p>
